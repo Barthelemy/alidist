@@ -1,6 +1,6 @@
 package: ROOT
 version: "%(tag_basename)s"
-tag: "v6-16-00"
+tag: "v6-18-00"
 source: https://github.com/root-project/root
 requires:
   - arrow
@@ -41,9 +41,9 @@ unset ROOTSYS
 COMPILER_CC=cc
 COMPILER_CXX=c++
 COMPILER_LD=c++
-[[ "$CXXFLAGS" == *'-std=c++11'* ]] && CXX11=1 || true
-[[ "$CXXFLAGS" == *'-std=c++14'* ]] && CXX14=1 || true
-[[ "$CXXFLAGS" == *'-std=c++17'* ]] && CXX17=1 || true
+[[ "$CXXFLAGS" == *'-std=c++11'* ]] && CMAKE_CXX_STANDARD=11 || true
+[[ "$CXXFLAGS" == *'-std=c++14'* ]] && CMAKE_CXX_STANDARD=14 || true
+[[ "$CXXFLAGS" == *'-std=c++17'* ]] && CMAKE_CXX_STANDARD=17 || true
 
 # We do not use global options for ROOT, otherwise the -g will kill compilation 
 # on < 8GB machines
@@ -94,7 +94,7 @@ cmake $SOURCEDIR                                                                
       -Dalien=OFF                                                                      \
       ${ALIEN_RUNTIME_VERSION:+-DMONALISA_DIR=$ALIEN_RUNTIME_ROOT}                     \
       ${XROOTD_ROOT:+-DXROOTD_ROOT_DIR=$XROOTD_ROOT}                                   \
-      ${CXX11:+-Dcxx11=ON}                                                             \
+      ${CMAKE_CXX_STANDARD:+-DCMAKE_CXX_STANDARD=$CMAKE_CXX_STANDARD}                                                             \
       ${CXX14:+-Dcxx14=ON}                                                             \
       ${CXX17:+-Dcxx17=ON}                                                             \
       -Dfreetype=ON                                                                    \
@@ -129,11 +129,12 @@ cmake $SOURCEDIR                                                                
       -Dgviz=OFF                                                                       \
       -Dbuiltin_davix=OFF                                                              \
       -Ddavix=OFF                                                                      \
+      -Dvmc=ON                                                                         \
       ${DISABLE_MYSQL:+-Dmysql=OFF}                                                    \
       ${ROOT_HAS_PYTHON:+-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}}                     \
       -DCMAKE_PREFIX_PATH="$FREETYPE_ROOT;$SYS_OPENSSL_ROOT;$GSL_ROOT;$ALIEN_RUNTIME_ROOT;$PYTHON_ROOT;$PYTHON_MODULES_ROOT;$LIBPNG_ROOT;$LZMA_ROOT"
 FEATURES="builtin_pcre mathmore xml ssl opengl minuit2 http
-          pythia6 roofit soversion vdt ${CXX11:+cxx11} ${CXX14:+cxx14} ${CXX17:+cxx17}
+          pythia6 roofit soversion vdt
           ${XROOTD_ROOT:+xrootd} ${ALIEN_RUNTIME_ROOT:+monalisa} ${ROOT_HAS_PYTHON:+python}
           ${ARROW_VERSION:+arrow}"
 NO_FEATURES="root7 ${LZMA_VERSION:+builtin_lzma} ${LIBPNG_VERSION:+builtin_png} krb5 gviz
