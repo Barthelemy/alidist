@@ -27,7 +27,12 @@ incremental_recipe: |
     echo "Run the tests"
     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALLROOT/lib
     PATH=$PATH:$INSTALLROOT/bin
-    ROOT_DYN_PATH=$ROOT_DYN_PATH:$INSTALLROOT/lib ctest --output-on-failure -LE manual ${JOBS+-j $JOBS}
+    #ROOT_DYN_PATH=$ROOT_DYN_PATH:$INSTALLROOT/lib ctest --output-on-failure -LE manual ${JOBS+-j $JOBS}
+    #    curl -sLO https://raw.githubusercontent.com/aphecetche/scripts/master/cmake/coverage.cmake
+    echo "${SOURCEDIR}"
+    cp $SOURCEDIR/coverage.cmake .
+    ROOT_DYN_PATH=$ROOT_DYN_PATH:$INSTALLROOT/lib ctest -VV --output-on-failure -LE manual -S coverage.cmake -DCMAKE_GENERATOR=Ninja ${JOBS+-j $JOBS}
+    #-DSOURCEDIR=$HOME/alice/dev/QualityControl -DCMAKE_GENERATOR=Ninja -V
   fi
 ---
 #!/bin/bash -ex
@@ -47,7 +52,7 @@ esac
 # For the PR checkers (which sets ALIBUILD_O2_TESTS),
 # we impose -Werror as a compiler flag
 if [[ $ALIBUILD_O2_TESTS ]]; then
-  CXXFLAGS="${CXXFLAGS} -Werror -Wno-error=deprecated-declarations"
+  CXXFLAGS="${CXXFLAGS} -Werror -Wno-error=deprecated-declarations --coverage -g -O0"
 fi
 
 # Use ninja if in devel mode, ninja is found and DISABLE_NINJA is not 1
@@ -87,7 +92,11 @@ if [[ $ALIBUILD_O2_TESTS ]]; then
   echo "Run the tests"
   LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INSTALLROOT/lib
   PATH=$PATH:$INSTALLROOT/bin
-  ROOT_DYN_PATH=$ROOT_DYN_PATH:$INSTALLROOT/lib ctest --output-on-failure -LE manual ${JOBS+-j $JOBS}
+#  ROOT_DYN_PATH=$ROOT_DYN_PATH:$INSTALLROOT/lib ctest --output-on-failure -LE manual ${JOBS+-j $JOBS}
+#  curl -sLO https://raw.githubusercontent.com/aphecetche/scripts/master/cmake/coverage.cmake
+  echo "$SOURCEDIR"
+  cp $SOURCEDIR/coverage.cmake .
+  ROOT_DYN_PATH=$ROOT_DYN_PATH:$INSTALLROOT/lib ctest -VV --output-on-failure -LE manual -S coverage.cmake -DCMAKE_GENERATOR=Ninja ${JOBS+-j $JOBS}
 fi
 
 DEVEL_SOURCES="`readlink $SOURCEDIR || echo $SOURCEDIR`"
@@ -138,19 +147,19 @@ mkdir -p $INSTALLROOT/etc/modulefiles && rsync -a --delete etc/modulefiles/ $INS
 
 # Create code coverage information to be uploaded
 # by the calling driver to codecov.io or similar service
-if [[ $CMAKE_BUILD_TYPE == COVERAGE ]]; then
-  rm -rf coverage.info
-  lcov --base-directory $SOURCEDIR --directory . --capture --output-file coverage.info
-  lcov --remove coverage.info '*/usr/*' --output-file coverage.info
-  lcov --remove coverage.info '*/boost/*' --output-file coverage.info
-  lcov --remove coverage.info '*/ROOT/*' --output-file coverage.info
-  lcov --remove coverage.info '*/FairRoot/*' --output-file coverage.info
-  lcov --remove coverage.info '*/G__*Dict*' --output-file coverage.info
-  perl -p -i -e "s|$SOURCEDIR||g" coverage.info # Remove the absolute path for sources
-  perl -p -i -e "s|$BUILDDIR||g" coverage.info # Remove the absolute path for generated files
-  perl -p -i -e "s|^[0-9]+/||g" coverage.info # Remove PR location path
-  lcov --list coverage.info
-fi
+#if [[ $CMAKE_BUILD_TYPE == COVERAGE ]]; then
+#  rm -rf coverage.info
+#  lcov --base-directory $SOURCEDIR --directory . --capture --output-file coverage.info
+#  lcov --remove coverage.info '*/usr/*' --output-file coverage.info
+#  lcov --remove coverage.info '*/boost/*' --output-file coverage.info
+#  lcov --remove coverage.info '*/ROOT/*' --output-file coverage.info
+#  lcov --remove coverage.info '*/FairRoot/*' --output-file coverage.info
+#  lcov --remove coverage.info '*/G__*Dict*' --output-file coverage.info
+#  perl -p -i -e "s|$SOURCEDIR||g" coverage.info # Remove the absolute path for sources
+#  perl -p -i -e "s|$BUILDDIR||g" coverage.info # Remove the absolute path for generated files
+#  perl -p -i -e "s|^[0-9]+/||g" coverage.info # Remove PR location path
+#  lcov --list coverage.info
+#fi
 
 # Add extra RPM dependencies
 cat > $INSTALLROOT/.rpm-extra-deps <<EOF
