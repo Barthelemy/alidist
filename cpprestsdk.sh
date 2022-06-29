@@ -26,6 +26,7 @@ cmake "$SOURCEDIR/Release"                              \
       -DCPPREST_EXCLUDE_WEBSOCKETS=ON                   \
       -DCMAKE_INSTALL_LIBDIR=lib                        \
       ${BOOST_REVISION:+-DBOOST_ROOT=$BOOST_ROOT}       \
+      -DWERROR=0                                        \
       ${OPENSSL_ROOT:+-DOPENSSL_ROOT_DIR=$OPENSSL_ROOT}
 
 make ${JOBS:+-j $JOBS}
