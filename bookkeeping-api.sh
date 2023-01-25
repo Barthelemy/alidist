@@ -29,7 +29,7 @@ cmake $SOURCEDIR/cxx-client                  \
       ${CONFIGURATION_REVISION:+-DConfiguration_ROOT=$CONFIGURATION_ROOT} \
       ${INFOLOGGER_REVISION:+-DInfoLogger_ROOT=$INFOLOGGER_ROOT} \
       -DCMAKE_INSTALL_LIBDIR=lib          \
-      -DOPENSSL_ROOT_DIR=$OPENSSL_ROOT_DIR \
+      ${OPENSSL_ROOT:+-DOPENSSL_ROOT_DIR=$OPENSSL_ROOT} \
       -DCMAKE_INSTALL_PREFIX=$INSTALLROOT
 
 VERBOSE=1 cmake --build . -- ${JOBS+-j $JOBS} install
