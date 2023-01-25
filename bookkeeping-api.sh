@@ -18,12 +18,9 @@ incremental_recipe: |
 case $ARCHITECTURE in
   osx*)
     # If we preferred system tools, we need to make sure we can pick them up.
+    [[ ! $OPENSSL_ROOT ]] && OPENSSL_ROOT=$(brew --prefix openssl@1.1)
     [[ ! $GRPC_ROOT ]] && GRPC_ROOT=`brew --prefix grpc`
-    [[ ! $OPENSSL_ROOT ]] && OPENSSL_ROOT_DIR=$(brew --prefix openssl@1.1)
-
-    SONAME=dylib
   ;;
-  *) SONAME=so ;;
 esac
 
 cmake $SOURCEDIR/cxx-client                  \
