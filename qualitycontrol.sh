@@ -13,6 +13,8 @@ requires:
   - Control-OCCPlugin
   - Python-modules:(?!osx_arm64)
   - libjalienO2
+  - bookkeeping-api
+  - grpc
 build_requires:
   - CMake
   - "Clang:(?!osx)"   # for Gandiva
@@ -82,6 +84,9 @@ cmake $SOURCEDIR                                              \
       ${LIBUV_ROOT:+-DLibUV_INCLUDE_DIR=$LIBUV_ROOT/include}             \
       ${LIBUV_ROOT:+-DLibUV_LIBRARY=$LIBUV_ROOT/lib/libuv.$SONAME}       \
       ${LIBJALIENO2_ROOT:+-DlibjalienO2_ROOT=$LIBJALIENO2_ROOT}          \
+      ${GRPC_ROOT:+-DGRPC_ROOT=$GRPC_ROOT}          \
+      ${GRPC_ROOT:+-DGRPC_ROOT_DIR=$GRPC_ROOT}          \
+      ${BOOKKEEPING_API_REVISION:+-DBookeeping_Api_ROOT=$BOOKKEEPING_API_ROOT} \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 cp ${BUILDDIR}/compile_commands.json ${INSTALLROOT}
