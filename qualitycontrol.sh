@@ -1,6 +1,6 @@
 package: QualityControl
 version: "%(tag_basename)s"
-tag: v1.162.3
+tag: v1.162.4
 requires:
   - boost
   - "GCC-Toolchain:(?!osx)"
@@ -83,6 +83,8 @@ cmake $SOURCEDIR                                                                
       -DMODERNCPPKAFKA_ROOT=${MODERNCPPKAFKA_ROOT}/include                                                      \
       -DRDKAFKA_ROOT=${LIBRDKAFKA_ROOT}                                                                         \
       ${ARROW_ROOT:+-DGandiva_DIR=$ARROW_ROOT/lib/cmake/Gandiva}                                                \
+      ${MODERNCPPKAFKA_REVISION:+-Dmoderncppkafka_ROOT=$MODERNCPPKAFKA_ROOT}                                                    \
+      ${RDKAFKA_REVISION:+-Dlibrdkafka_ROOT=$RDKAFKA_ROOT}                                                    \
       ${ARROW_ROOT:+-DArrow_DIR=$ARROW_ROOT/lib/cmake/Arrow}                                                    \
       ${ARROW_ROOT:+${CLANG_ROOT:+-DLLVM_ROOT=$CLANG_ROOT}}                                                     \
       ${CLANG_ROOT:+-DLLVM_ROOT="$CLANG_ROOT"}                                                                  \
